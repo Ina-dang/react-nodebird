@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 // eslint-disable-next-line react/prop-types
 const NodeBird = ({ Component }) => {
@@ -15,8 +15,8 @@ const NodeBird = ({ Component }) => {
   );
 };
 
-NodeBird.PropTypes = {
-  Component: PropTypes.elementType.isRequired,
+NodeBird.propTypes = {
+  Component: propTypes.elementType.isRequired,
 };
 
 export default NodeBird;

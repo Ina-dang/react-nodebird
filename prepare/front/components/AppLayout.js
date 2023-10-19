@@ -1,32 +1,48 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import propTypes from 'prop-types';
 import Link from 'next/link';
 import { Input, Menu, Row, Col } from 'antd';
+import UserProfile from './UserProfile';
+import LoginForm from './LoginForm';
+
+const items = [
+  {
+    label: (
+      <Link href='/' legacyBehavior>
+        <a>노드버드</a>
+      </Link>
+    ),
+    key: 'title',
+  },
+  {
+    label: <Link href='/profile'>프로필</Link>,
+    key: 'profile',
+  },
+  {
+    label: (
+      <Link href='/' legacyBehavior>
+        <Input.Search enterButton style={{ verticalAlign: 'middle' }} />
+      </Link>
+    ),
+    key: 'search',
+  },
+  {
+    label: <Link href='/signup'>회원가입</Link>,
+    key: 'signup',
+  },
+];
 
 const AppLayout = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  console.log(setIsLoggedIn);
   return (
     <div>
       {/* class속성이 a태그에 있을경우 legacyBehavior 속성 추가 */}
-      <Menu mode='horizontal'>
-        <Menu.Item>
-          <Link href='/' legacyBehavior>
-            <a>노드버드</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item>
-          <Link href='/profile'>프로필</Link>
-        </Menu.Item>
-        <Menu.Item>
-          <Input.Search enterButton style={{ verticalAlign: 'middle' }} />
-        </Menu.Item>
-        <Menu.Item>
-          <Link href='/signup'>회원가입</Link>
-        </Menu.Item>
-      </Menu>
+      <Menu mode='horizontal' items={items} />
       <Row gutter={8}>
         {/*브레이크포인트: xs 모바일 <576,  sm 태블릿 >= 576, md 작은데스크탑 >=768 lg: 큰화면 >=992*/}
         <Col xs={24} md={6}>
-          왼쪽메뉴
+          {isLoggedIn ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}
@@ -46,7 +62,7 @@ const AppLayout = ({ children }) => {
 };
 
 AppLayout.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: propTypes.node.isRequired,
 };
 
 export default AppLayout;
