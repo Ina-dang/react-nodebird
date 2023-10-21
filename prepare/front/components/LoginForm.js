@@ -7,7 +7,12 @@ const ButtonWrapper = styled.div`
   margin-top: 10px;
 `;
 
-const LoginForm = () => {
+const FormWrapper = styled(Form)`
+  padding: 10px;
+`;
+
+// eslint-disable-next-line react/prop-types
+const LoginForm = ({ setIsLoggedIn }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
 
@@ -18,8 +23,15 @@ const LoginForm = () => {
   const onChangePassword = useCallback((event) => {
     setPassword(event.target.value);
   }, []);
+
+  const onSubmitForm = useCallback(() => {
+    //Form onFinish속성은 e.preventDefatul()가 적용되어있다.
+    console.log(id, password);
+    setIsLoggedIn(true);
+  }, [id, password]);
+
   return (
-    <Form>
+    <FormWrapper onFinish={onSubmitForm}>
       <div>
         <label htmlFor='user-id'>아이디</label>
         <br />
@@ -43,7 +55,7 @@ const LoginForm = () => {
           <Button>회원가입</Button>
         </Link>
       </ButtonWrapper>
-    </Form>
+    </FormWrapper>
   );
 };
 
