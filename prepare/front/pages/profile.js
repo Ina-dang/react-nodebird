@@ -17,17 +17,15 @@ const Profile = () => {
     { nickname: '막철' },
   ];
   return (
-    <>
+    <AppLayout>
       <Head>
         <meta charSet='utf=8' />
         <title>내 프로필 | profile</title>
       </Head>
-      <AppLayout>
-        <NicknameEditForm />
-        <FollowList header='팔로잉 목록' data={followingList} />
-        <FollowList header='팔로워 목록' data={followerList} />
-      </AppLayout>
-    </>
+      <NicknameEditForm />
+      <FollowList header='팔로잉 목록' data={followingList} />
+      <FollowList header='팔로워 목록' data={followerList} />
+    </AppLayout>
   );
 };
 

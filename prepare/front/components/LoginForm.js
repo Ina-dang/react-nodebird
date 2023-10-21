@@ -1,7 +1,9 @@
 import { Button, Form, Input } from 'antd';
 import Link from 'next/link';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import useInput from '../hooks/useInput';
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -13,16 +15,8 @@ const FormWrapper = styled(Form)`
 
 // eslint-disable-next-line react/prop-types
 const LoginForm = ({ setIsLoggedIn }) => {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
-
-  const onChangeId = useCallback((event) => {
-    setId(event.target.value);
-  }, []);
-
-  const onChangePassword = useCallback((event) => {
-    setPassword(event.target.value);
-  }, []);
+  const [id, onChangeId] = useInput('');
+  const [password, onChangePassword] = useInput('');
 
   const onSubmitForm = useCallback(() => {
     //Form onFinish속성은 e.preventDefatul()가 적용되어있다.
@@ -57,6 +51,10 @@ const LoginForm = ({ setIsLoggedIn }) => {
       </ButtonWrapper>
     </FormWrapper>
   );
+};
+
+LoginForm.propsTypes = {
+  setIsLoggedIn: PropTypes.func.isRequired,
 };
 
 export default LoginForm;
