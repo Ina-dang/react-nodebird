@@ -1,22 +1,27 @@
 import React from 'react';
 import Head from 'next/head';
-import propTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
-// eslint-disable-next-line react/prop-types
-const NodeBird = ({ Component }) => {
+import wrapper from '../store/configureStore';
+import { Provider } from 'react-redux';
+
+const NodeBird = ({ Component, ...rest }) => {
+  const { store } = wrapper.useWrappedStore(rest);
+
   return (
-    <>
+    <Provider store={store}>
       <Head>
         <meta charSet='utf=8' />
         <title>nodeBird</title>
       </Head>
       <Component />
-    </>
+    </Provider>
   );
 };
 
 NodeBird.propTypes = {
-  Component: propTypes.elementType.isRequired,
+  Component: PropTypes.elementType.isRequired,
+  store: PropTypes.object,
 };
 
 export default NodeBird;
