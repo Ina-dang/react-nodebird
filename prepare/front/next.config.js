@@ -1,5 +1,5 @@
 module.exports = {
   experimental: {
-    forceSwcTransforms: false,
+    forceSwcTransforms: true,
   },
 };
