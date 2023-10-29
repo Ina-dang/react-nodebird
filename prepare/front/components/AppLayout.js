@@ -39,8 +39,8 @@ const items = [
 ];
 
 const AppLayout = ({ children }) => {
-  const { isLoggedIn } = useSelector((state) => state.user);
-  console.log(isLoggedIn);
+  const { me } = useSelector((state) => state.user);
+  console.log(me);
   return (
     <div>
       {/* class속성이 a태그에 있을경우 legacyBehavior 속성 추가 */}
@@ -48,7 +48,7 @@ const AppLayout = ({ children }) => {
       <Row gutter={8}>
         {/*브레이크포인트: xs 모바일 <576,  sm 태블릿 >= 576, md 작은데스크탑 >=768 lg: 큰화면 >=992*/}
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {me ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}
