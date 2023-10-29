@@ -11,7 +11,6 @@ const NodeBird = ({ Component, ...rest }) => {
   return (
     <Provider store={store}>
       <Head>
-        <meta charSet='utf=8' />
         <title>nodeBird</title>
       </Head>
       <Component />

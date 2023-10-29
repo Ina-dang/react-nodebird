@@ -3,8 +3,8 @@ import Link from 'next/link';
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
-import { useDispatch } from 'react-redux';
-import { loginAction } from '../reducers/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginRequestAction } from '../reducers/user';
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -19,10 +19,11 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const [id, onChangeId] = useInput('');
   const [password, onChangePassword] = useInput('');
+  const { isLoggingIn } = useSelector((state) => state.user);
 
   const onSubmitForm = useCallback(() => {
     //Form onFinish속성은 e.preventDefatul()가 적용되어있다.
-    dispatch(loginAction({ id, password }));
+    dispatch(loginRequestAction({ id, password }));
   }, [id, password]);
 
   return (
@@ -43,7 +44,7 @@ const LoginForm = () => {
         />
       </div>
       <ButtonWrapper>
-        <Button type='primary' htmlType='submit' loading={false}>
+        <Button type='primary' htmlType='submit' loading={isLoggingIn}>
           로그인
         </Button>
         <Link href='/signup'>
