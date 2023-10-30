@@ -21,7 +21,7 @@ const CommentForm = ({ post }) => {
   const onSubmitComment = useCallback(() => {
     dispatch({
       type: ADD_COMMENT_REQUEST,
-      data: { content: commentText, postId: post.id, userId: id },
+      data: { content: commentText, userId: id, postId: post.id },
     });
   }, [commentText, id]);
 
@@ -36,7 +36,7 @@ const CommentForm = ({ post }) => {
         <Button
           type='primary'
           htmlType='submit'
-          style={{ position: 'absolute', right: 0, bottom: -40 }}
+          style={{ position: 'absolute', right: 0, bottom: -40, zIndex: 1 }}
         >
           댓글달기
         </Button>

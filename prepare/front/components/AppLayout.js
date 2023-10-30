@@ -40,7 +40,6 @@ const items = [
 
 const AppLayout = ({ children }) => {
   const { me } = useSelector((state) => state.user);
-  console.log(me);
   return (
     <div>
       {/* class속성이 a태그에 있을경우 legacyBehavior 속성 추가 */}

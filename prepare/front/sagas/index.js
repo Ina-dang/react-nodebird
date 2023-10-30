@@ -10,5 +10,5 @@ import userSaga from './user';
  * all은 모두 동시에 실행
  */
 export default function* rootSaga() {
-  yield all([fork(postSaga), fork(userSaga)]);
+  yield all([fork(userSaga), fork(postSaga)]);
 }
