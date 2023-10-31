@@ -62,19 +62,22 @@ export const logoutRequestAction = () => {
   };
 };
 
-const dummyUser = (data) => ({
-  ...data,
-  nickname: 'Inadang',
-  id: 1,
-  Posts: [],
-  Followings: [],
-  Followers: [],
-});
+const dummyUser = (data) => {
+  console.log('dummyUser::', data);
+  return {
+    ...data,
+    nickname: 'Inadang',
+    id: 1,
+    Posts: [{ id: 1 }],
+    Followings: [{ nickname: 'ina' }, { nickname: '123123' }],
+    Followers: [{ nickname: 'ina' }],
+  };
+};
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case LOG_IN_REQUEST:
-      console.log('action:: ', action);
+      console.log('LOG_IN_REQUEST:: ', action);
       return {
         ...state,
         logInLoading: true,
@@ -82,15 +85,15 @@ const reducer = (state = initialState, action) => {
         logInDone: false,
       };
     case LOG_IN_SUCCESS:
-      console.log('action:: ', action);
+      console.log('LOG_IN_SUCCESS:: ', action);
       return {
         ...state,
+        me: dummyUser(action.data),
         logInLoading: false,
         logInDone: true,
-        me: dummyUser(action.data),
       };
     case LOG_IN_FAILURE:
-      console.log('action:: ', action);
+      console.log('LOG_IN_FAILURE:: ', action);
       return {
         ...state,
         logInLoading: false,
@@ -154,6 +157,24 @@ const reducer = (state = initialState, action) => {
         ...state,
         changeNicknameLoading: false,
         changeNicknameError: action.error,
+      };
+    case ADD_POST_TO_ME:
+      console.log('ADD_POST_TO_ME', state.me);
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Posts: [{ id: action.data }, ...state.me.Posts],
+        },
+      };
+    case REMOVE_POST_OF_ME:
+      console.log('REMOVE_POST_OF_ME', state.me);
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Posts: state.me.Posts.filter((v) => v.id !== action.data),
+        },
       };
     default:
       return state;

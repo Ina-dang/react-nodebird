@@ -10,24 +10,31 @@ export const initialState = {
       content: '첫 게시글 #첫게시 #익스프레스',
       Images: [
         {
+          id: shortId.generate(),
           src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
         },
         {
+          id: shortId.generate(),
           src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
         },
         {
+          id: shortId.generate(),
           src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
         },
       ],
       Comments: [
         {
+          id: shortId.generate(),
           User: {
+            id: shortId.generate(),
             nickname: 'nero',
           },
           content: '우와 개정판이 나왔군요~',
         },
         {
+          id: shortId.generate(),
           User: {
+            id: shortId.generate(),
             nickname: 'hero',
           },
           content: '얼른 사고싶어요~',
@@ -75,14 +82,17 @@ export const addPost = (data) => {
   };
 };
 
-export const addComment = (data) => ({
-  type: ADD_COMMENT_REQUEST,
-  data,
-});
+export const addComment = (data) => {
+  console.log('DATA::', data);
+  return {
+    type: ADD_COMMENT_REQUEST,
+    data,
+  };
+};
 
 const dummyPost = (data) => ({
-  id: shortId.generate(),
-  content: data,
+  id: data.id,
+  content: data.content,
   User: {
     id: 1,
     nickname: '이나당',
@@ -125,6 +135,7 @@ const reducer = (state = initialState, action) => {
         addPostError: action.error,
       };
     case ADD_COMMENT_REQUEST:
+      console.log('ADD_COMMENT_REQUEST::', action);
       return {
         ...state,
         addCommentLoading: true,
@@ -132,21 +143,14 @@ const reducer = (state = initialState, action) => {
         addCommentError: null,
       };
     case ADD_COMMENT_SUCCESS:
-      const postIndex = state.mainPosts.findIndex(
-        (v) => v.id === action.data.postId
-      );
-      console.log('postIndex::', postIndex);
-      const post = { ...state.mainPosts[postIndex] };
-      console.log('post::', post);
-      post.Comments = [dummyComment(action.data.content), ...Comments];
-      console.log('post::', post);
-      const mainPosts = [...state.mainPosts];
-      console.log('post::', post);
-      mainPosts[postIndex] = post;
-      console.log('post::', post);
+      console.log('ADD_COMMENT_SUCCESS::', action);
+      const post = state.mainPosts.find((v) => v.id === action.data.postId);
+
+      post.Comments.unshift(dummyComment(action.data.content));
+      console.log('post:::', post);
       return {
         ...state,
-        mainPosts,
+        mainPosts: [post],
         addCommentLoading: false,
         addCommentDone: true,
       };
@@ -155,6 +159,28 @@ const reducer = (state = initialState, action) => {
         ...state,
         addCommentLoading: false,
         addCommentError: action.error,
+      };
+    case REMOVE_POST_REQUEST:
+      console.log('actREMOVE_POST_REQUESTion:: ', action);
+      return {
+        ...state,
+        removePostLoading: true,
+        removePostDone: false,
+        removePostError: null,
+      };
+    case REMOVE_POST_SUCCESS:
+      console.log('REMOVE_POST_SUCCESS::', action);
+      return {
+        ...state,
+        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
+        removePostLoading: false,
+        removePostDone: true,
+      };
+    case REMOVE_POST_FAILURE:
+      return {
+        ...state,
+        removePostLoading: false,
+        removePostError: action.error,
       };
     default:
       return state;
