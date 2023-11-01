@@ -13,6 +13,7 @@ import PostImages from './PostImages';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
 import { REMOVE_POST_REQUEST } from '../reducers/post';
+import Followbutton from './FollowButton';
 
 const PostCard = ({ post }) => {
   const [liked, setLiked] = useState(false);
@@ -41,6 +42,7 @@ const PostCard = ({ post }) => {
     <div style={{ marginBottom: '30px' }}>
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
+        extra={id && <Followbutton post={post} />}
         actions={[
           <RetweetOutlined key='retweet' />,
           liked ? (
