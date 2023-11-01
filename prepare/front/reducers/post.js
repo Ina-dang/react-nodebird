@@ -3,48 +3,7 @@ import { produce } from 'immer';
 import { fakerKO as faker } from '@faker-js/faker';
 
 export const initialState = {
-  mainPosts: [
-    {
-      id: 1,
-      User: {
-        id: 1,
-        nickname: '이나당',
-      },
-      content: '첫 게시글 #첫게시 #익스프레스',
-      Images: [
-        {
-          id: shortId.generate(),
-          src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
-        },
-        {
-          id: shortId.generate(),
-          src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
-        },
-        {
-          id: shortId.generate(),
-          src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
-        },
-      ],
-      Comments: [
-        {
-          id: shortId.generate(),
-          User: {
-            id: shortId.generate(),
-            nickname: 'nero',
-          },
-          content: '우와 개정판이 나왔군요~',
-        },
-        {
-          id: shortId.generate(),
-          User: {
-            id: shortId.generate(),
-            nickname: 'hero',
-          },
-          content: '얼른 사고싶어요~',
-        },
-      ],
-    },
-  ],
+  mainPosts: [],
   imagePaths: [],
   hasMorePosts: true,
   loadPostsLoading: false,
@@ -60,29 +19,6 @@ export const initialState = {
   addCommentDone: false,
   addCommentError: null,
 };
-faker.seed(11123);
-initialState.mainPosts = initialState.mainPosts.concat(
-  Array(20)
-    .fill()
-    .map(() => ({
-      id: shortId.generate(),
-      User: {
-        id: shortId.generate(),
-        nickname: faker.person.fullName(),
-      },
-      content: faker.lorem.lines(),
-      Images: [{ src: faker.image.avatar() }],
-      Comments: [
-        {
-          User: {
-            id: shortId.generate(),
-            nickname: faker.person.fullName(),
-            content: faker.lorem.lines({ min: 1, max: 3 }),
-          },
-        },
-      ],
-    }))
-);
 
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
@@ -99,6 +35,39 @@ export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+
+export const generateDummyPost = (number) => {
+  faker.seed(123);
+  return Array(number)
+    .fill()
+    .map(() => ({
+      id: shortId.generate(),
+      User: {
+        id: shortId.generate(),
+        nickname: faker.person.fullName(),
+      },
+      content: faker.lorem.lines(),
+      Images: [
+        {
+          src: faker.image.urlLoremFlickr({
+            category: 'animal',
+            width: 1000,
+            height: 600,
+          }),
+        },
+      ],
+      Comments: [
+        {
+          User: {
+            id: shortId.generate(),
+            nickname: faker.person.fullName(),
+            content: faker.lorem.lines({ min: 1, max: 3 }),
+          },
+        },
+      ],
+    }));
+};
+// initialState.mainPosts = initialState.mainPosts.concat(generateDummyPost(10));
 
 export const addPost = (data) => {
   console.log('DATA::', data);
@@ -139,6 +108,21 @@ const dummyComment = (data) => ({
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case LOAD_POSTS_REQUEST:
+        draft.loadPostsLoading = true;
+        draft.loadPostsDone = false;
+        draft.loadPostsError = null;
+        break;
+      case LOAD_POSTS_SUCCESS:
+        draft.mainPosts = action.data.concat(draft.mainPosts);
+        draft.loadPostsLoading = false;
+        draft.loadPostsDone = true;
+        draft.hasMorePosts = draft.mainPosts.length < 50;
+        break;
+      case LOAD_POSTS_FAILURE:
+        draft.loadPostsLoading = false;
+        draft.loadPostsError = action.error;
+        break;
       case ADD_POST_REQUEST:
         draft.addPostLoading = true;
         draft.addPostDone = false;

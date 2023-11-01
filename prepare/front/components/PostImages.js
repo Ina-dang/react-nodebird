@@ -13,18 +13,16 @@ const PostImages = ({ images }) => {
   const onClose = useCallback(() => {
     setShowImagesZoom(false);
   }, []);
-
   if (images.length === 1) {
     return (
       <>
         <img
-          style={{ maxWidth: '400px' }}
           role='presentation'
           src={images[0].src}
           alt={images[0].src}
           onClick={onZoom}
         />
-        {showImagesZoom && <ImagesZoom image={images} onClose={onClose} />}
+        {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </>
     );
   }

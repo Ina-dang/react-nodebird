@@ -38,7 +38,7 @@ const PostCard = ({ post }) => {
   }, []);
 
   return (
-    <div>
+    <div style={{ marginBottom: '30px' }}>
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
