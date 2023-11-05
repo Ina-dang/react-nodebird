@@ -1,6 +1,16 @@
 const express = require('express');
 const postRouter = require('./routes/post');
+const db = require('./models');
 const app = express();
+
+db.sequelize
+  .sync()
+  .then(() => {
+    console.log('db 연결 성공...');
+  })
+  .catch(() => {
+    console.log('db 연결 실패...');
+  });
 
 /**
  * 자주쓰는 요청들
