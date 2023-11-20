@@ -5,6 +5,33 @@ const passport = require('passport');
 const { User, Post } = require('../models');
 
 const router = express.Router();
+router.post('/', async (req, res, next) => {
+  console.log('req', req);
+  try {
+    const exUser = await User.findOne({
+      where: {
+        email: req.body.email,
+      },
+    });
+
+    if (exUser) {
+      return res.status(403).send('이미 사용중인 이메일입니다.');
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+    await User.create({
+      email: req.body.email,
+      nickname: req.body.nickname,
+      password: hashedPassword,
+    });
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.status(201).send('ok');
+  } catch (error) {
+    console.error(error);
+    next(error); //status 500
+  }
+});
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -48,37 +75,15 @@ router.post('/login', (req, res, next) => {
 });
 
 router.post('/logout', (req, res, next) => {
-  req.logOut();
-  req.session.destroy();
-  res.status(200).send('ok');
-});
-
-router.post('/', async (req, res, next) => {
-  console.log('req', req);
-  try {
-    const exUser = await User.findOne({
-      where: {
-        email: req.body.email,
-      },
-    });
-
-    if (exUser) {
-      return res.status(403).send('이미 사용중인 이메일입니다.');
+  req.logOut((err) => {
+    if (err) {
+      return next(err);
+    } else {
+      console.log('로그아웃 완료');
+      req.session.destroy();
+      res.status(200).send('ok');
     }
-
-    const hashedPassword = await bcrypt.hash(req.body.password, 12);
-    await User.create({
-      email: req.body.email,
-      nickname: req.body.nickname,
-      password: hashedPassword,
-    });
-    // res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.status(201).send('ok');
-  } catch (error) {
-    console.error(error);
-    next(error); //status 500
-  }
+  });
 });
 
 module.exports = router;

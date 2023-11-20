@@ -109,6 +109,7 @@ function* logOut() {
       type: LOG_OUT_SUCCESS,
     });
   } catch (error) {
+    console.log(error);
     yield put({
       type: LOG_OUT_FAILURE,
       error: error.response.data,
