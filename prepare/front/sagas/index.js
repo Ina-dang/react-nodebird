@@ -1,7 +1,9 @@
 import { all, fork } from 'redux-saga/effects';
-
+import axios from 'axios';
 import postSaga from './post';
 import userSaga from './user';
+
+axios.defaults.baseURL = 'http://localhost:3060/';
 
 /**
  * fork 또는 call로 실행

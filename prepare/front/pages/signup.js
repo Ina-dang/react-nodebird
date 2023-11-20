@@ -1,5 +1,6 @@
 import Head from 'next/head';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
+import Router from 'next/router';
 import { Button, Checkbox, Form, Input } from 'antd';
 
 import AppLayout from '../components/AppLayout';
@@ -14,7 +15,27 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector(
+    (state) => state.user
+  );
+
+  useEffect(() => {
+    if (!(me && me.id)) {
+      Router.replace('/');
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
+    if (signUpDone) {
+      Router.replace('/');
+    }
+  }, [signUpDone]);
+  useEffect(() => {
+    if (signUpError) {
+      //dialog로 바꾸기
+      alert(signUpError);
+    }
+  }, [signUpError]);
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -89,6 +110,7 @@ const Signup = () => {
             value={password}
             onChange={onChangePassword}
             required
+            type='password'
           />
         </div>
         <div>
@@ -99,6 +121,7 @@ const Signup = () => {
             value={passwordCheck}
             onChange={onChangePasswordCheck}
             required
+            type='password'
           />
           {passwordError && (
             <ErrorMessage>비밀번호가 일치하지 않습니다.</ErrorMessage>

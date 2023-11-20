@@ -1,9 +1,60 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { User } = requires('../models');
+const passport = require('passport');
+
+const { User, Post } = require('../models');
+
 const router = express.Router();
 
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      console.error(err);
+      return next(err);
+    }
+    if (info) {
+      return res.status(401).send(info.reason);
+    }
+    return req.login(user, async (loginErr) => {
+      if (loginErr) {
+        console.error(loginErr);
+        return next(loginErr);
+      }
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: user.id },
+        attributes: {
+          exclude: ['password'],
+        },
+        include: [
+          {
+            model: Post,
+            attributes: ['id'],
+          },
+          {
+            model: User,
+            as: 'Followings',
+            attributes: ['id'],
+          },
+          {
+            model: User,
+            as: 'Followers',
+            attributes: ['id'],
+          },
+        ],
+      });
+      return res.status(200).json(fullUserWithoutPassword);
+    });
+  })(req, res, next);
+});
+
+router.post('/logout', (req, res, next) => {
+  req.logOut();
+  req.session.destroy();
+  res.status(200).send('ok');
+});
+
 router.post('/', async (req, res, next) => {
+  console.log('req', req);
   try {
     const exUser = await User.findOne({
       where: {
@@ -21,6 +72,8 @@ router.post('/', async (req, res, next) => {
       nickname: req.body.nickname,
       password: hashedPassword,
     });
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.status(201).send('ok');
   } catch (error) {
     console.error(error);

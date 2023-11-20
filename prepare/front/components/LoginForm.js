@@ -1,6 +1,6 @@
 import { Button, Form, Input } from 'antd';
 import Link from 'next/link';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,9 +17,15 @@ const FormWrapper = styled(Form)`
 // eslint-disable-next-line react/prop-types
 const LoginForm = () => {
   const dispatch = useDispatch();
+  const { logInLoading, logInError } = useSelector((state) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
-  const { logInLoading } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
 
   const onSubmitForm = useCallback(() => {
     //Form onFinish속성은 e.preventDefatul()가 적용되어있다.
@@ -46,6 +52,7 @@ const LoginForm = () => {
           name='user-password'
           value={password}
           onChange={onChangePassword}
+          type='password'
           required
         />
       </div>

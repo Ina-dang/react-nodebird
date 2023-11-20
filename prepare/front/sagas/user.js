@@ -1,4 +1,6 @@
-import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, delay, fork, put, takeLatest } from 'redux-saga/effects';
+import axios from 'axios';
+
 import {
   FOLLOW_FAILURE,
   FOLLOW_REQUEST,
@@ -63,6 +65,7 @@ function* unfollow(action) {
       data: action.data,
     });
   } catch (error) {
+    console.log('error::', error);
     yield put({
       type: UNFOLLOW_FAILURE,
       error: error.response.data,
@@ -73,21 +76,20 @@ function* unfollow(action) {
  * API 요청
  * @returns axios 결과
  */
-// function logInAPI(data) {
-//   return axios.post('/api/login', data);
-// }
+function logInAPI(data) {
+  return axios.post('/user/login', data);
+}
 
 /**
  * 서버에 요청하는 제너레이터 함수
  */
 function* logIn(action) {
   try {
-    //인수가 여러개일때는 const result = yield call(logInAPI, action.data, 'a','b','c') 처럼 함수뒤에 매개변수들로 들어감
-    // const result = yield call(logInAPI, action.data);
-    yield delay(1000);
+    console.log(action);
+    const result = yield call(logInAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (error) {
     yield put({
@@ -96,17 +98,15 @@ function* logIn(action) {
     });
   }
 }
-// function logOutAPI() {
-//   return axios.post('/api/logout');
-// }
+function logOutAPI() {
+  return axios.post('/user/logout');
+}
 
 function* logOut() {
   try {
-    // const result = yield call(logOutAPI);
-    yield delay(1000);
+    yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
-      data: null,
     });
   } catch (error) {
     yield put({
@@ -116,8 +116,8 @@ function* logOut() {
   }
 }
 
-function signUpAPI() {
-  return axios.post('http://localhost:3065/user', data);
+function signUpAPI(data) {
+  return axios.post('/user', data);
 }
 
 function* signUp(action) {

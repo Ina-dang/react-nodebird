@@ -1,10 +1,17 @@
 const express = require('express');
+const cors = require('cors');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const dotenv = require('dotenv');
 
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 const db = require('./models');
 const app = express();
+const passportConfig = require('./passport');
 
+dotenv.config();
 db.sequelize
   .sync()
   .then(() => {
@@ -14,20 +21,27 @@ db.sequelize
     console.log('db 연결 실패...');
   });
 
+passportConfig();
+
 //서버에 json,urlencoded 장착
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-/**
- * 자주쓰는 요청들
- * app.get -> 가져오다
- * app.post -> 생성하다
- * app.put -> 전체수정 (통째로 덮어씌움) 그래서 patch를 더많이씀
- * app.delete -> 제거
- * app.patch -> 부분수정 (내용중 닉네임만 수정하거나..)
- * app.options -> 요청보낼 수 있는지 찔러보기
- * app.head -> 헤더만 가져오기
- */
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(
+  session({
+    saveUninitialized: false,
+    resave: false,
+    secret: process.env.COOKIE_SECRET,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
   res.send('hello express');
@@ -48,6 +62,6 @@ app.get('/api/posts', (req, res) => {
 app.use('/post', postRouter);
 app.use('/user', userRouter);
 
-app.listen(3065, () => {
+app.listen(3060, () => {
   console.log('서버 실행 중');
 });
