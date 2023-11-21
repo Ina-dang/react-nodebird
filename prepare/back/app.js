@@ -62,6 +62,13 @@ app.get('/api/posts', (req, res) => {
 app.use('/post', postRouter);
 app.use('/user', userRouter);
 
+/*
+app.use((err, req, res, next) => {
+  // 에러처리 미들웨어는 매개변수 4개
+  // 기본적으로 들어있지만 특별하게 처리하고싶으면 이처럼 따로 미들웨어로 추가해준다
+});
+ */
+
 app.listen(3060, () => {
   console.log('서버 실행 중');
 });
