@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 const passport = require('passport');
 const dotenv = require('dotenv');
 
 const postRouter = require('./routes/post');
+const postsRouter = require('./routes/posts');
 const userRouter = require('./routes/user');
 const db = require('./models');
 const app = express();
@@ -22,6 +24,7 @@ db.sequelize
   });
 
 passportConfig();
+app.use(morgan('dev'));
 
 //서버에 json,urlencoded 장착
 app.use(
@@ -51,15 +54,8 @@ app.get('/api', (req, res) => {
   res.send('hello express api');
 });
 
-app.get('/api/posts', (req, res) => {
-  res.json([
-    { id: 1, content: 'hello' },
-    { id: 2, content: 'hello2' },
-    { id: 3, content: 'hello3' },
-  ]);
-});
-
 app.use('/post', postRouter);
+app.use('/posts', postsRouter);
 app.use('/user', userRouter);
 
 /*

@@ -26,18 +26,17 @@ import {
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import axios from 'axios';
 
-// function loadPostsAPI(data) {
-//   return axios.post('/api/post', data);
-// }
+function loadPostsAPI() {
+  return axios.get('/posts');
+}
 
 function* loadPosts(action) {
   console.log('action::', action);
   try {
-    // const result = yield call(loadPostsAPI, action.data);
-    yield delay(1000);
+    const result = yield call(loadPostsAPI, action.data);
     yield put({
       type: LOAD_POSTS_SUCCESS,
-      data: generateDummyPost(10),
+      data: result.data,
     });
   } catch (err) {
     console.error(err);
@@ -101,13 +100,10 @@ function* removePost(action) {
 }
 
 function addCommentAPI(data) {
-  return axios.post(`/post/${data.postId}/comment`, data, {
-    withCredentials: true,
-  });
+  return axios.post(`/post/${data.postId}/comment`, data);
 }
 
 function* addComment(action) {
-  console.log('addComment::', action.data);
   try {
     const result = yield call(addCommentAPI, action.data);
     yield put({

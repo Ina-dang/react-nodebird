@@ -36,39 +36,6 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
-export const generateDummyPost = (number) => {
-  faker.seed(123);
-  return Array(number)
-    .fill()
-    .map(() => ({
-      id: shortId.generate(),
-      User: {
-        id: shortId.generate(),
-        nickname: faker.person.fullName(),
-      },
-      content: faker.lorem.lines(),
-      Images: [
-        {
-          src: faker.image.urlLoremFlickr({
-            category: 'animal',
-            width: 1000,
-            height: 600,
-          }),
-        },
-      ],
-      Comments: [
-        {
-          User: {
-            id: shortId.generate(),
-            nickname: faker.person.fullName(),
-            content: faker.lorem.lines({ min: 1, max: 3 }),
-          },
-        },
-      ],
-    }));
-};
-// initialState.mainPosts = initialState.mainPosts.concat(generateDummyPost(10));
-
 export const addPost = (data) => {
   console.log('DATA::', data);
   return {
