@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 import { LOAD_POSTS_REQUEST } from '../reducers/post';
+import { LOAD_USER_REQUEST } from '../reducers/user';
 
 /**
  * 첫 랜더페이지 (구버전 Next는 Pages 안에 있는 컴포넌트들을 코드스플리팅된 각 페이지로 매핑한다)
@@ -17,6 +18,9 @@ const Home = () => {
     (state) => state.post
   );
   useEffect(() => {
+    dispatch({
+      type: LOAD_USER_REQUEST,
+    });
     dispatch({
       type: LOAD_POSTS_REQUEST,
     });
