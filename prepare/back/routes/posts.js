@@ -23,9 +23,13 @@ router.get('/', async (req, res, next) => {
             },
           ],
         },
+        {
+          model: User, //좋아요 누른 사람
+          as: 'Likers',
+          attributes: ['id'],
+        },
       ],
     });
-    console.log(posts);
     res.status(200).json(posts);
   } catch (error) {
     console.error(error);
