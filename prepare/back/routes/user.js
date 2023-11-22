@@ -118,7 +118,7 @@ router.post('/logout', isLoggedIn, (req, res, next) => {
     } else {
       console.log('로그아웃 완료');
       req.session.destroy();
-      res.status(200).send('ok');
+      res.status(201).send('ok');
     }
   });
 });
