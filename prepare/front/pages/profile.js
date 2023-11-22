@@ -24,8 +24,8 @@ const Profile = () => {
         <title>내 프로필 | profile</title>
       </Head>
       <NicknameEditForm />
-      <FollowList header='팔로잉' data={me.Follwings} />
-      <FollowList header='팔로워' data={me.Follwers} />
+      {me.Followings && <FollowList header='팔로잉' data={me.Followings} />}
+      {me.Followers && <FollowList header='팔로워' data={me.Followers} />}
     </AppLayout>
   );
 };
