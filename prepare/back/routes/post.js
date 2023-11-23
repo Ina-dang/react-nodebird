@@ -15,13 +15,39 @@ try {
   fs.mkdirSync('uploads');
 }
 
-router.post('/', isLoggedIn, async (req, res, next) => {
+//이미지나 동영상처리는 웬만하면 프론트에서 클라우드로 바로 올리는게 좋다.
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, 'uploads');
+    }, //배포때는 s3로 , 개발에는 드라이브에
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname); //확장자 추출
+      const basename = path.basename(file.originalname, ext);
+      done(null, basename + '_' + new Date().getTime() + ext); //이나당151817842.png
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 }, //20MB
+});
+
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   // POST /post
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        const images = await Promise.all(
+          req.body.image.map((image) => Image.create({ src: image }))
+        );
+        await post.addImages(images);
+      } else {
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
     console.log('POST', post);
     const fullPost = await Post.findOne({
       where: post.id,
@@ -50,21 +76,6 @@ router.post('/', isLoggedIn, async (req, res, next) => {
     console.error(error);
     next(error);
   }
-});
-
-//이미지나 동영상처리는 웬만하면 프론트에서 클라우드로 바로 올리는게 좋다.
-const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, done) {
-      done(null, 'uploads');
-    }, //배포때는 s3로 , 개발에는 드라이브에
-    filename(req, file, done) {
-      const ext = path.extname(file.originalname); //확장자 추출
-      const basename = path.basename(file.originalname, ext);
-      done(null, basename + new Date().getTime() + ext); //이나당151817842.png
-    },
-  }),
-  limits: { fileSize: 20 * 1024 * 1024 }, //20MB
 });
 
 router.post(

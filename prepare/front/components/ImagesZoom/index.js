@@ -12,7 +12,6 @@ import {
 } from './styles';
 
 const ImagesZoom = ({ images, onClose }) => {
-  console.log(images);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const settings = {
@@ -35,7 +34,10 @@ const ImagesZoom = ({ images, onClose }) => {
           <Slider {...settings}>
             {images.map((image) => (
               <ImageWrapper key={image.src}>
-                <img src={image.src} alt={image.src} />
+                <img
+                  src={`http://localhost:3060/${image.src}`}
+                  alt={image.src}
+                />
               </ImageWrapper>
             ))}
           </Slider>

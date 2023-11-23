@@ -3,6 +3,7 @@ const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const path = require('path');
 const passport = require('passport');
 const dotenv = require('dotenv');
 
@@ -10,10 +11,10 @@ const postRouter = require('./routes/post');
 const postsRouter = require('./routes/posts');
 const userRouter = require('./routes/user');
 const db = require('./models');
-const app = express();
 const passportConfig = require('./passport');
 
 dotenv.config();
+const app = express();
 db.sequelize
   .sync()
   .then(() => {
@@ -33,6 +34,8 @@ app.use(
     credentials: true,
   })
 );
+app.use('/', express.static(path.join(__dirname, 'uploads')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
