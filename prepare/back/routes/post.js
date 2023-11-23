@@ -1,9 +1,19 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const { Post, Image, Comment, User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
+
+try {
+  fs.accessSync('uploads');
+} catch (error) {
+  console.log('uploads 폴더가 없으므로 생성합니다.');
+  fs.mkdirSync('uploads');
+}
 
 router.post('/', isLoggedIn, async (req, res, next) => {
   // POST /post
@@ -42,8 +52,39 @@ router.post('/', isLoggedIn, async (req, res, next) => {
   }
 });
 
+//이미지나 동영상처리는 웬만하면 프론트에서 클라우드로 바로 올리는게 좋다.
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, 'uploads');
+    }, //배포때는 s3로 , 개발에는 드라이브에
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname); //확장자 추출
+      const basename = path.basename(file.originalname, ext);
+      done(null, basename + new Date().getTime() + ext); //이나당151817842.png
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 }, //20MB
+});
+
+router.post(
+  '/images',
+  isLoggedIn,
+  upload.array('image'),
+  async (req, res, next) => {
+    //POST /post/images
+    try {
+      console.log(req.files);
+      res.json(req.files.map((v) => v.filename));
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
 // POST /id/comment 동적으로 바꾸기
-router.post('/:postId/comment', isLoggedIn, async (req, res) => {
+router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   const postId = parseInt(req.params.postId);
   try {
     //존재하지 않는 게시글에 댓글을 달 때 백엔드에서 검증 필요

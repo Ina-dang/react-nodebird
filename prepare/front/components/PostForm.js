@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
-import { ADD_POST_REQUEST, addPost } from '../reducers/post';
+import { UPLOAD_IMAGES_REQUEST, addPost } from '../reducers/post';
 
 const FormWrapper = styled(Form)`
   margin: 10px 0 20px;
@@ -34,6 +34,20 @@ const PostForm = () => {
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [imageInput.current]);
+
+  const onChangeImages = useCallback((e) => {
+    console.log('images', e.target.files); //배열모양을 띄는 객체
+    const imageFormData = new FormData();
+    [].forEach.call(e.target.files, (f) => {
+      imageFormData.append('image', f);
+    });
+
+    dispatch({
+      type: UPLOAD_IMAGES_REQUEST,
+      data: imageFormData,
+    });
+  }, []);
+
   return (
     <FormWrapper encType='multipart/form-data' onFinish={onSubmitForm}>
       <Input.TextArea
@@ -43,7 +57,14 @@ const PostForm = () => {
         placeholder='어떤 신기한 일이 있었나요?'
       />
       <div>
-        <input type='file' hidden multiple ref={imageInput} />
+        <input
+          onChange={onChangeImages}
+          type='file'
+          name='image'
+          hidden
+          multiple
+          ref={imageInput}
+        />
         <Button onClick={onClickImageUpload}>이미지 업로드</Button>
         <ButtonStyle type='primary' htmlType='submit'>
           Twit
