@@ -1,40 +1,45 @@
 import { produce } from 'immer';
 
 export const initialState = {
-  loadUserLoading: false,
-  loadUserDone: false,
-  loadUserError: null,
-  followLoading: false, // 팔로우 시도중
-  followDone: false,
-  followError: null,
-  unfollowLoading: false, // 언팔로우 시도중
-  unfollowDone: false,
-  unfollowError: null,
-  logInLoading: false, // 로그인 시도중
-  logInDone: false,
-  logInError: null,
-  logOutLoading: false, // 로그아웃 시도중
-  logOutDone: false,
-  logOutError: null,
-  signUpLoading: false, // 회원가입 시도중
-  signUpDone: false,
-  signUpError: null,
-  changeNicknameLoading: false, // 닉네임 변경 시도중
   changeNicknameDone: false,
   changeNicknameError: null,
-  me: null,
-  signUpData: {},
-  loginData: {},
-  loadFollowingsLoading: false,
-  loadFollowingsDone: false,
-  loadFollowingsError: null,
-  loadFollowersLoading: false,
+  changeNicknameLoading: false, // 닉네임 변경 시도중
+  followDone: false,
+  followError: null,
+  followLoading: false, // 팔로우 시도중
   loadFollowersDone: false,
   loadFollowersError: null,
-  removeFollowerLoading: false,
+  loadFollowersLoading: false,
+  loadFollowingsDone: false,
+  loadFollowingsError: null,
+  loadFollowingsLoading: false,
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
+  loadMyInfoLoading: false,
+  loadUserDone: false,
+  loadUserError: null,
+  loadUserLoading: false,
+  logInDone: false,
+  logInError: null,
+  logInLoading: false, // 로그인 시도중
+  logOutDone: false,
+  logOutError: null,
+  logOutLoading: false, // 로그아웃 시도중
+  me: null,
   removeFollowerDone: false,
   removeFollowerError: null,
+  removeFollowerLoading: false,
+  signUpDone: false,
+  signUpError: null,
+  signUpLoading: false, // 회원가입 시도중
+  unfollowDone: false,
+  unfollowError: null,
+  unfollowLoading: false, // 언팔로우 시도중
 };
+
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
 export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
@@ -107,6 +112,20 @@ const dummyUser = (data) => {
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case LOAD_MY_INFO_REQUEST:
+        draft.loadMyInfoLoading = true;
+        draft.loadMyInfoError = null;
+        draft.loadMyInfoDone = false;
+        break;
+      case LOAD_MY_INFO_SUCCESS:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoDone = true;
+        draft.me = action.data;
+        break;
+      case LOAD_MY_INFO_FAILURE:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoError = action.error;
+        break;
       case LOAD_USER_REQUEST:
         draft.loadUserLoading = true;
         draft.loadUserError = null;
