@@ -32,6 +32,7 @@ export const initialState = {
   signUpDone: false,
   signUpError: null,
   signUpLoading: false, // 회원가입 시도중
+  userInfo: null,
   unfollowDone: false,
   unfollowError: null,
   unfollowLoading: false, // 언팔로우 시도중
@@ -97,18 +98,6 @@ export const logoutRequestAction = () => {
   };
 };
 
-const dummyUser = (data) => {
-  console.log('dummyUser::', data);
-  return {
-    ...data,
-    nickname: 'Inadang',
-    id: 1,
-    Posts: [{ id: 1 }],
-    Followings: [{ nickname: 'ina' }, { nickname: '123123' }],
-    Followers: [{ nickname: 'ina' }],
-  };
-};
-
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -134,7 +123,7 @@ const reducer = (state = initialState, action) =>
       case LOAD_USER_SUCCESS:
         draft.loadUserLoading = false;
         draft.loadUserDone = true;
-        draft.me = action.data;
+        draft.userInfo = action.data;
         break;
       case LOAD_USER_FAILURE:
         draft.loadUserLoading = false;
