@@ -70,7 +70,6 @@ const PostCard = ({ post }) => {
     });
   }, [id]);
   const postImages = post?.Images ?? [];
-  console.log("post", post);
   const liked = post.Likers?.find((v) => v.id === id);
   return (
     <div style={{ marginBottom: "30px" }}>

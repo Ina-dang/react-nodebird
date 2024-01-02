@@ -15,7 +15,6 @@ const Post = () => {
   const { id } = router.query;
   const { singlePost } = useSelector((state) => state.post);
 
-  console.log("###########", singlePost);
   return (
     <AppLayout>
       <PostCard post={singlePost} />
@@ -25,11 +24,6 @@ const Post = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
-    console.log(
-      "### getServerSideProps params:",
-      context.params,
-      context.params.id
-    );
     const cookie = context.req ? context.req.headers.cookie : "";
     axios.defaults.headers.Cookie = "";
     if (cookie) {

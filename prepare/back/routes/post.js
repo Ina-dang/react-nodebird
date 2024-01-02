@@ -57,7 +57,6 @@ router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
         await post.addImages(image);
       }
     }
-    console.log("POST", post);
     const fullPost = await Post.findOne({
       where: post.id,
       include: [
@@ -94,7 +93,6 @@ router.post(
   async (req, res, next) => {
     //POST /post/images
     try {
-      console.log(req.files);
       res.json(req.files.map((v) => v.filename));
     } catch (error) {
       console.error(error);
@@ -105,7 +103,6 @@ router.post(
 
 router.get("/:postId", async (req, res, next) => {
   // GET /post/1
-  console.log("#####req####", req.params);
   try {
     const post = await Post.findOne({
       where: { id: req.params.postId },

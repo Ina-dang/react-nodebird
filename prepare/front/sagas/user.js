@@ -1,5 +1,5 @@
-import { all, fork, put, takeLatest, call } from 'redux-saga/effects';
-import axios from 'axios';
+import { all, fork, put, takeLatest, call } from "redux-saga/effects";
+import axios from "axios";
 
 import {
   CHANGE_NICKNAME_FAILURE,
@@ -35,7 +35,7 @@ import {
   UNFOLLOW_FAILURE,
   UNFOLLOW_REQUEST,
   UNFOLLOW_SUCCESS,
-} from '../reducers/user';
+} from "../reducers/user";
 
 function removeFollowerAPI(data) {
   return axios.delete(`/user/follower/${data}`);
@@ -58,7 +58,7 @@ function* removeFollower(action) {
 }
 
 function loadFollowersAPI(data) {
-  return axios.get('/user/followers', data);
+  return axios.get("/user/followers", data);
 }
 
 function* loadFollowers(action) {
@@ -78,7 +78,7 @@ function* loadFollowers(action) {
 }
 
 function loadFollowingsAPI(data) {
-  return axios.get('/user/followings', data);
+  return axios.get("/user/followings", data);
 }
 
 function* loadFollowings(action) {
@@ -98,7 +98,7 @@ function* loadFollowings(action) {
 }
 
 function changeNicknameAPI(data) {
-  return axios.patch('/user/nickname', { nickname: data });
+  return axios.patch("/user/nickname", { nickname: data });
 }
 
 function* changeNickname(action) {
@@ -118,7 +118,7 @@ function* changeNickname(action) {
 }
 
 function loadMyInfoAPI() {
-  return axios.get('/user');
+  return axios.get("/user");
 }
 
 function* loadMyInfo() {
@@ -158,7 +158,7 @@ function* loadUser(action) {
 }
 
 function logInAPI(data) {
-  return axios.post('/user/login', data);
+  return axios.post("/user/login", data);
 }
 
 function* logIn(action) {
@@ -178,7 +178,7 @@ function* logIn(action) {
 }
 
 function logOutAPI() {
-  return axios.post('/user/logout');
+  return axios.post("/user/logout");
 }
 
 function* logOut() {
@@ -197,13 +197,12 @@ function* logOut() {
 }
 
 function signUpAPI(data) {
-  return axios.post('/user', data);
+  return axios.post("/user", data);
 }
 
 function* signUp(action) {
   try {
     const result = yield call(signUpAPI, action.data);
-    console.log(result);
     yield put({
       type: SIGN_UP_SUCCESS,
     });

@@ -72,7 +72,6 @@ export const ADD_COMMENT_FAILURE = "ADD_COMMENT_FAILURE";
 export const REMOVE_IMAGE = "REMOVE_IMAGE";
 
 export const addPost = (data) => {
-  console.log("DATA::", data);
   return {
     type: ADD_POST_REQUEST,
     data,
@@ -80,7 +79,6 @@ export const addPost = (data) => {
 };
 
 export const addComment = (data) => {
-  console.log("DATA::", data);
   return {
     type: ADD_COMMENT_REQUEST,
     data,
@@ -179,7 +177,6 @@ const reducer = (state = initialState, action) =>
         draft.loadPostLoading = false;
         draft.loadPostDone = true;
         draft.singlePost = action.data;
-        console.log("##########################", action.data);
         break;
       }
       case LOAD_POST_FAILURE:

@@ -118,12 +118,10 @@ function* unlikePost(action) {
 }
 
 function loadPostsAPI(lastId) {
-  console.log("lastId::", lastId);
   return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPosts(action) {
-  console.log("action::", action);
   try {
     const result = yield call(loadPostsAPI, action.lastId);
     yield put({
@@ -144,7 +142,6 @@ function loadPostAPI(data) {
 }
 
 function* loadPost(action) {
-  console.log("loadPost action", action);
   try {
     const result = yield call(loadPostAPI, action.data);
     yield put({
@@ -160,15 +157,12 @@ function* loadPost(action) {
 }
 
 function addPostAPI(data) {
-  console.log("API", data);
   return axios.post("/post", data);
 }
 
 function* addPost(action) {
-  console.log("action::", action);
   try {
     const result = yield call(addPostAPI, action.data);
-    console.log("@@@@@@@@@@", result);
     yield put({
       type: ADD_POST_SUCCESS,
       data: result.data,
@@ -190,7 +184,6 @@ function removePostAPI(data) {
 }
 
 function* removePost(action) {
-  console.log("removePost::", action);
   try {
     const result = yield call(removePostAPI, action.data);
     yield put({
@@ -222,7 +215,6 @@ function* addComment(action) {
       data: result.data,
     });
   } catch (err) {
-    console.log(err);
     yield put({
       type: ADD_COMMENT_FAILURE,
       error: err.response.data,

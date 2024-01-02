@@ -1,35 +1,34 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const passport = require('passport');
+const express = require("express");
+const bcrypt = require("bcrypt");
+const passport = require("passport");
 
-const { User, Post } = require('../models');
-const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const { User, Post } = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-  console.log(req.headers);
+router.get("/", async (req, res, next) => {
   try {
     if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: req.user.id },
         attributes: {
-          exclude: ['password'],
+          exclude: ["password"],
         },
         include: [
           {
             model: Post,
-            attributes: ['id'],
+            attributes: ["id"],
           },
           {
             model: User,
-            as: 'Followings',
-            attributes: ['id'],
+            as: "Followings",
+            attributes: ["id"],
           },
           {
             model: User,
-            as: 'Followers',
-            attributes: ['id'],
+            as: "Followers",
+            attributes: ["id"],
           },
         ],
       });
@@ -43,28 +42,28 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:userId', async (req, res, next) => {
+router.get("/:userId", async (req, res, next) => {
   //GET /user/1
   try {
     const fullUserWithoutPassword = await User.findOne({
       where: { id: req.params.userId },
       attributes: {
-        exclude: ['password'],
+        exclude: ["password"],
       },
       include: [
         {
           model: Post,
-          attributes: ['id'],
+          attributes: ["id"],
         },
         {
           model: User,
-          as: 'Followings',
-          attributes: ['id'],
+          as: "Followings",
+          attributes: ["id"],
         },
         {
           model: User,
-          as: 'Followers',
-          attributes: ['id'],
+          as: "Followers",
+          attributes: ["id"],
         },
       ],
     });
@@ -75,10 +74,9 @@ router.get('/:userId', async (req, res, next) => {
       data.Followers = data.Followers.length;
       data.Followings = data.Followings.length;
 
-      console.log('DATA::', data);
       res.status(200).json(data);
     } else {
-      res.status(404).json('존재하지 않는 사용자입니다.');
+      res.status(404).json("존재하지 않는 사용자입니다.");
     }
   } catch (error) {
     console.error(error);
@@ -86,8 +84,7 @@ router.get('/:userId', async (req, res, next) => {
   }
 });
 
-router.post('/', isNotLoggedIn, async (req, res, next) => {
-  console.log('req', req);
+router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     const exUser = await User.findOne({
       where: {
@@ -96,7 +93,7 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
     });
 
     if (exUser) {
-      return res.status(403).send('이미 사용중인 이메일입니다.');
+      return res.status(403).send("이미 사용중인 이메일입니다.");
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
@@ -106,16 +103,16 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
       password: hashedPassword,
     });
     // res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.status(201).send('ok');
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.status(201).send("ok");
   } catch (error) {
     console.error(error);
     next(error); //status 500
   }
 });
 
-router.post('/login', isNotLoggedIn, (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
     if (err) {
       console.error(err);
       return next(err);
@@ -131,22 +128,22 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
         attributes: {
-          exclude: ['password'],
+          exclude: ["password"],
         },
         include: [
           {
             model: Post,
-            attributes: ['id'],
+            attributes: ["id"],
           },
           {
             model: User,
-            as: 'Followings',
-            attributes: ['id'],
+            as: "Followings",
+            attributes: ["id"],
           },
           {
             model: User,
-            as: 'Followers',
-            attributes: ['id'],
+            as: "Followers",
+            attributes: ["id"],
           },
         ],
       });
@@ -155,19 +152,19 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/logout', isLoggedIn, (req, res, next) => {
+router.post("/logout", isLoggedIn, (req, res, next) => {
   req.logOut((err) => {
     if (err) {
       return next(err);
     } else {
-      console.log('로그아웃 완료');
+      console.log("로그아웃 완료");
       req.session.destroy();
-      res.status(201).send('ok');
+      res.status(201).send("ok");
     }
   });
 });
 
-router.patch('/nickname', isLoggedIn, async (req, res, next) => {
+router.patch("/nickname", isLoggedIn, async (req, res, next) => {
   try {
     await User.update(
       {
@@ -186,12 +183,12 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.patch('/:userId/follow', isLoggedIn, async (req, res, next) => {
+router.patch("/:userId/follow", isLoggedIn, async (req, res, next) => {
   //PATCH /user/1/follow
   try {
     const user = await User.findOne({ where: { id: req.params.userId } });
     if (!user) {
-      res.status(403).send('존재하지 않는 회원입니다.');
+      res.status(403).send("존재하지 않는 회원입니다.");
     }
     await user.addFollowers(req.user.id);
     res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
@@ -201,12 +198,12 @@ router.patch('/:userId/follow', isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.delete('/:userId/follow', isLoggedIn, async (req, res, next) => {
+router.delete("/:userId/follow", isLoggedIn, async (req, res, next) => {
   //DELETE /user/1/follow
   try {
     const user = await User.findOne({ where: { id: req.params.userId } });
     if (!user) {
-      res.status(403).send('존재하지 않는 회원입니다.');
+      res.status(403).send("존재하지 않는 회원입니다.");
     }
     await user.removeFollowers(req.user.id);
     res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
@@ -216,12 +213,12 @@ router.delete('/:userId/follow', isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get('/followers', isLoggedIn, async (req, res, next) => {
+router.get("/followers", isLoggedIn, async (req, res, next) => {
   //GET /user/followers
   try {
     const user = await User.findOne({ where: { id: req.user.id } });
     if (!user) {
-      res.status(403).send('존재하지 않는 회원입니다.');
+      res.status(403).send("존재하지 않는 회원입니다.");
     }
     const followers = await user.getFollowers();
     res.status(200).json(followers);
@@ -230,13 +227,13 @@ router.get('/followers', isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
-router.get('/followings', isLoggedIn, async (req, res, next) => {
+router.get("/followings", isLoggedIn, async (req, res, next) => {
   //GET /user/followings
   try {
     const user = await User.findOne({ where: { id: req.user.id } });
 
     if (!user) {
-      res.status(403).send('존재하지 않는 회원입니다.');
+      res.status(403).send("존재하지 않는 회원입니다.");
     }
     const followings = await user.getFollowings();
     res.status(200).json(followings);
@@ -246,12 +243,12 @@ router.get('/followings', isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.delete('/follower/:userId', isLoggedIn, async (req, res, next) => {
+router.delete("/follower/:userId", isLoggedIn, async (req, res, next) => {
   //DELETE /user/1/follow
   try {
     const user = await User.findOne({ where: { id: req.params.userId } });
     if (!user) {
-      res.status(403).send('존재하지 않는 회원입니다.');
+      res.status(403).send("존재하지 않는 회원입니다.");
     }
     await user.removeFollowings(req.user.id);
     res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
