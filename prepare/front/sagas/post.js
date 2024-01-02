@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import {
   all,
   call,
@@ -7,7 +7,7 @@ import {
   put,
   takeLatest,
   throttle,
-} from 'redux-saga/effects';
+} from "redux-saga/effects";
 import {
   ADD_COMMENT_FAILURE,
   ADD_COMMENT_REQUEST,
@@ -21,6 +21,9 @@ import {
   LOAD_POSTS_FAILURE,
   LOAD_POSTS_REQUEST,
   LOAD_POSTS_SUCCESS,
+  LOAD_POST_FAILURE,
+  LOAD_POST_REQUEST,
+  LOAD_POST_SUCCESS,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
   REMOVE_POST_SUCCESS,
@@ -33,8 +36,8 @@ import {
   UPLOAD_IMAGES_FAILURE,
   UPLOAD_IMAGES_REQUEST,
   UPLOAD_IMAGES_SUCCESS,
-} from '../reducers/post';
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
+} from "../reducers/post";
+import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
 function retweetAPI(data) {
   return axios.post(`/post/${data}/retweet`);
@@ -115,12 +118,12 @@ function* unlikePost(action) {
 }
 
 function loadPostsAPI(lastId) {
-  console.log('lastId::', lastId);
+  console.log("lastId::", lastId);
   return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPosts(action) {
-  console.log('action::', action);
+  console.log("action::", action);
   try {
     const result = yield call(loadPostsAPI, action.lastId);
     yield put({
@@ -136,16 +139,36 @@ function* loadPosts(action) {
   }
 }
 
+function loadPostAPI(data) {
+  return axios.get(`/post/${data}`);
+}
+
+function* loadPost(action) {
+  console.log("loadPost action", action);
+  try {
+    const result = yield call(loadPostAPI, action.data);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function addPostAPI(data) {
-  console.log('API', data);
-  return axios.post('/post', data);
+  console.log("API", data);
+  return axios.post("/post", data);
 }
 
 function* addPost(action) {
-  console.log('action::', action);
+  console.log("action::", action);
   try {
     const result = yield call(addPostAPI, action.data);
-    console.log('@@@@@@@@@@', result);
+    console.log("@@@@@@@@@@", result);
     yield put({
       type: ADD_POST_SUCCESS,
       data: result.data,
@@ -167,7 +190,7 @@ function removePostAPI(data) {
 }
 
 function* removePost(action) {
-  console.log('removePost::', action);
+  console.log("removePost::", action);
   try {
     const result = yield call(removePostAPI, action.data);
     yield put({
@@ -222,6 +245,9 @@ function* watchUnlikePost() {
 function* watchLoadPosts() {
   yield throttle(2000, LOAD_POSTS_REQUEST, loadPosts);
 }
+function* watchLoadPost() {
+  yield throttle(2000, LOAD_POST_REQUEST, loadPost);
+}
 
 function* watchAddPost() {
   //takeLatest => 프론트에서 앞에꺼 무시하고 마지막만 실행해준다. 이거랑 별개로 백앤드도 유효성 검사 해줘야한다!
@@ -244,6 +270,7 @@ export default function* postSaga() {
     fork(watchLikePost),
     fork(watchUnlikePost),
     fork(watchLoadPosts),
+    fork(watchLoadPost),
     fork(watchAddPost),
     fork(watchAddComment),
     fork(watchRemovePost),

@@ -1,24 +1,24 @@
-import { Avatar, Button, Card, List, Popover } from 'antd';
-import React, { useCallback, useState, useEffect } from 'react';
+import { Avatar, Button, Card, List, Popover } from "antd";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   RetweetOutlined,
   HeartOutlined,
   MessageOutlined,
   EllipsisOutlined,
   HeartTwoTone,
-} from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-import PostImages from './PostImages';
-import CommentForm from './CommentForm';
-import PostCardContent from './PostCardContent';
+} from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import PropTypes from "prop-types";
+import PostImages from "./PostImages";
+import CommentForm from "./CommentForm";
+import PostCardContent from "./PostCardContent";
 import {
   LIKE_POST_REQUEST,
   REMOVE_POST_REQUEST,
   RETWEET_REQUEST,
   UNLIKE_POST_REQUEST,
-} from '../reducers/post';
-import Followbutton from './FollowButton';
+} from "../reducers/post";
+import Followbutton from "./FollowButton";
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -28,16 +28,17 @@ const PostCard = ({ post }) => {
 
   const onLike = useCallback(() => {
     if (!id) {
-      return alert('로그인이 필요합니다');
+      return alert("로그인이 필요합니다");
     }
     return dispatch({
       type: LIKE_POST_REQUEST,
       data: post.id,
     });
   }, []);
+
   const onUnlike = useCallback(() => {
     if (!id) {
-      return alert('로그인이 필요합니다');
+      return alert("로그인이 필요합니다");
     }
     return dispatch({
       type: UNLIKE_POST_REQUEST,
@@ -51,7 +52,7 @@ const PostCard = ({ post }) => {
 
   const onRemovePost = useCallback(() => {
     if (!id) {
-      return alert('로그인이 필요합니다');
+      return alert("로그인이 필요합니다");
     }
     return dispatch({
       type: REMOVE_POST_REQUEST,
@@ -61,41 +62,42 @@ const PostCard = ({ post }) => {
 
   const onRetweet = useCallback(() => {
     if (!id) {
-      return alert('로그인이 필요합니다');
+      return alert("로그인이 필요합니다");
     }
     return dispatch({
       type: RETWEET_REQUEST,
       data: post.id,
     });
   }, [id]);
-
+  const postImages = post?.Images ?? [];
+  console.log("post", post);
   const liked = post.Likers?.find((v) => v.id === id);
   return (
-    <div style={{ marginBottom: '30px' }}>
+    <div style={{ marginBottom: "30px" }}>
       <Card
-        cover={post.Images[0] && <PostImages images={post.Images} />}
+        cover={postImages[0] && <PostImages images={post.Images} />}
         extra={id && <Followbutton post={post} />}
         actions={[
-          <RetweetOutlined key='retweet' onClick={onRetweet} />,
+          <RetweetOutlined key="retweet" onClick={onRetweet} />,
           liked ? (
             <HeartTwoTone
-              twoToneColor='#eb2f96'
-              key='heart'
+              twoToneColor="#eb2f96"
+              key="heart"
               onClick={onUnlike}
             />
           ) : (
-            <HeartOutlined key='heart' onClick={onLike} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
-          <MessageOutlined key='comment' onClick={onToggleComment} />,
+          <MessageOutlined key="comment" onClick={onToggleComment} />,
           <Popover
-            key='more'
+            key="more"
             content={
               <Button.Group>
                 {id && post.User.id === id ? (
                   <>
                     <Button>수정</Button>
                     <Button
-                      type='dancer'
+                      type="dancer"
                       onClick={onRemovePost}
                       loading={removePostLoading}
                     >
@@ -131,8 +133,8 @@ const PostCard = ({ post }) => {
           </Card>
         ) : (
           <Card.Meta
-            avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-            title={post.User.nickname}
+            avatar={<Avatar>{post.User?.nickname[0]}</Avatar>}
+            title={post.User?.nickname}
             description={<PostCardContent postData={post.content} />}
           />
         )}
@@ -142,7 +144,7 @@ const PostCard = ({ post }) => {
           <CommentForm post={post} />
           <List
             header={`${post.Comments.length}개의 댓글`}
-            itemLayout='horizontal'
+            itemLayout="horizontal"
             dataSource={post.Comments}
             renderItem={(item) => (
               <List.Item>
