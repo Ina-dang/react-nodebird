@@ -9,14 +9,34 @@ import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import AppLayout from "../../components/AppLayout";
 import PostCard from "../../components/PostCard";
 import wrapper from "../../store/configureStore";
+import Head from "next/head";
 
 const Post = () => {
   const router = useRouter();
   const { id } = router.query;
   const { singlePost } = useSelector((state) => state.post);
+  console.log(singlePost);
 
   return (
     <AppLayout>
+      <Head>
+        <title>{singlePost.User.nickname}님의 글</title>
+        <meta name="description" content={singlePost.content} />
+        <meta
+          name="og:title"
+          content={`${singlePost.User.nickname}님의 게시글`}
+        />
+        <meta name="og:description" content={singlePost.content} />
+        <meta
+          name="og:image"
+          content={
+            singlePost.Images[0]
+              ? singlePost.Images[0]
+              : "https://nodebird.com/favicon.ico"
+          }
+        />
+        <meta name="og:url" content={`https://nodebird.com/post/${id}`} />
+      </Head>
       <PostCard post={singlePost} />
     </AppLayout>
   );
